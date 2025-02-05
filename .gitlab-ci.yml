@@ -1,5 +1,5 @@
 variables:
-  IMAGE_NAME: nanajanashia/demo-app
+  IMAGE_NAME: ramyasasidaran/gitlab_ci_cd
   IMAGE_TAG: python-app-1.0
 
 stages:
@@ -24,7 +24,7 @@ build_image:
   variables:
     DOCKER_TLS_CERTDIR: "/certs"
   before_script:
-    - docker login -u $REGISTRY_USER -p $REGISTRY_PASS
+    - docker login -u $Dockerhub_User -p $Docker_hub_pwd
   script:
     - docker build -t $IMAGE_NAME:$IMAGE_TAG .
     - docker push $IMAGE_NAME:$IMAGE_TAG
@@ -33,9 +33,11 @@ build_image:
 deploy:
   stage: deploy
   before_script:
-    - chmod 400 $SSH_KEY
+    - chmod 400 $PRIVATE_KEY
+
   script:
-    - ssh -o StrictHostKeyChecking=no -i $SSH_KEY root@161.35.223.117 "
-        docker login -u $REGISTRY_USER -p $REGISTRY_PASS &&
-        docker ps -aq | xargs docker stop | xargs docker rm &&
+    - ssh -o StrictHostKeyChecking=no -i $PRIVATE_KEY ec2-user@44.211.247.12 "
+        docker login -u $Dockerhub_User -p $Docker_hub_pwd &&
+        docker ps -aq | xargs -r docker stop | xargs -r docker rm &&
         docker run -d -p 5000:5000 $IMAGE_NAME:$IMAGE_TAG"
+        
