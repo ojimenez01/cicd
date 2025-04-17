@@ -11,4 +11,4 @@ run_tests:
     before_script:
         - apt-get update -y && apt-get install make -y
     script: 
-        - echo "hi" && make --version
+        - make test
