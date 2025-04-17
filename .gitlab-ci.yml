@@ -29,6 +29,15 @@ Build_and_Push:
     - docker build -t $image_name:${CI_COMMIT_SHA:0:3} .
     - docker push $image_name:${CI_COMMIT_SHA:0:3}
 
+Deploy:
+  stage: Deploy
+  before_script:
+    - echo "login to server"
+    - ssh -o StrictHostKeyChecking=no -i $ssh_key ubuntu@44.202.89.233
+    - apt-get update -y && apt-get install docker.io -y
+  script:
+    - docker run -d -p 5000:5000 $image_name:${CI_COMMIT_SHA:0:3} --name pyapp
+
 
 
 
