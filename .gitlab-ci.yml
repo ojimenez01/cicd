@@ -37,7 +37,7 @@ Deploy:
     - id
   script:
   - ssh -o StrictHostKeyChecking=no -i "$ssh_key" ubuntu@44.202.89.233 "
-       apt-get update -y "
+       sudo apt-get update -y "
 
 
 
