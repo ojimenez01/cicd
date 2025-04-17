@@ -1,6 +1,6 @@
 variables:
   image_name: devopshandson3/pyappdemo
-  tag: ${CI_COMMIT_SHA:0:3}
+  image_tag: ${CI_COMMIT_SHA:0:3}
 
 stages:
   - Test
@@ -26,8 +26,8 @@ Build_and_Push:
   before_script:
     - docker login -u $username -p $token
   script:
-    - docker build -t $image_name:$tag .
-    - docker push $image_name:$tag
+    - docker build -t $image_name:$image_tag .
+    - docker push $image_name:$image_tag
 
 
 
