@@ -32,9 +32,14 @@ Build_and_Push:
 Deploy:
   stage: Deploy
   before_script:
+    - echo "set read permissions to key ..."
+    - chmod 400 $ssh_key
     - echo "login to server"
     - ssh -o StrictHostKeyChecking=no -i $ssh_key ubuntu@44.202.89.233
     - apt-get update -y && apt-get install docker.io -y
+    - echo "Stopped current container ...." && docker ps -q --filter "publish=8080" | xargs -r docker stop
+    - echo "Deleting Current Container ...." && docker ps -aq --filter "publish=8080" | xargs -r docker rm
+
   script:
     - docker run -d -p 5000:5000 $image_name:${CI_COMMIT_SHA:0:3} --name pyapp
 
