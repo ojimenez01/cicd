@@ -34,16 +34,17 @@ Deploy:
   before_script:
     - echo "Set read permissions to key ..."
     - chmod 400 "$ssh_key"
+    - id
   script:
   - ssh -o StrictHostKeyChecking=no -i "$ssh_key" ubuntu@44.202.89.233 "
-      apt-get update -y && \
-      apt-get install docker.io -y && \
+      sudo apt-get update -y && \
+      sudo apt-get install docker.io -y && \
       echo 'Stopping current container ...' && \
-      docker ps -q --filter \"publish=5000\" | xargs -r docker stop && \
+      sudo docker ps -q --filter \"publish=5000\" | xargs -r sudo docker stop && \
       echo 'Removing old container ...' && \
-      sudo docker ps -aq --filter \"publish=5000\" | xargs -r  docker rm && \
+      sudo docker ps -aq --filter \"publish=5000\" | xargs -r sudo docker rm && \
       echo 'Running new container ...' && \
-      docker run -d -p 5000:5000 --name pyapp $image_name:${CI_COMMIT_SHA:0:3}"
+      sudo docker run -d -p 5000:5000 --name pyapp $image_name:${CI_COMMIT_SHA:0:3}"
 
 
 
