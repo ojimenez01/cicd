@@ -44,6 +44,8 @@ Deploy:
        sudo docker run -d -p 5000:5000 $image_name:${CI_COMMIT_SHA:0:3} "
   
   when: manual
+  retry: 1
+  timeout: 1 minute
   allow_failure: false
   
   rules:
