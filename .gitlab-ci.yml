@@ -42,6 +42,10 @@ Deploy:
        echo "Stopped current container ...." && sudo docker ps -q --filter "publish=5000" | xargs -r sudo docker stop &&
        echo "Deleting Current Container ...." && sudo docker ps -aq --filter "publish=5000" | xargs -r docker rm &&
        sudo docker run -d -p 5000:5000 $image_name:${CI_COMMIT_SHA:0:3} "
+  
+  when: manual
+  allow_failure: false
+  
   rules:
     - if: '$CI_COMMIT_BRANCH=="fea"'
 
