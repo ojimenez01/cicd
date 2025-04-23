@@ -1,41 +1,59 @@
 variables:
-  IMAGE_NAME: nanajanashia/demo-app
-  IMAGE_TAG: python-app-1.0
+  image_name: devopshandson3/pyappdemo
+  #image_tag: ${CI_COMMIT_SHA:0:3}
 
 stages:
-  - test
-  - build
-  - deploy
+  - Test
+  - Build
+  - Deploy
+
 
 run_tests:
-  stage: test
-  image: python:3.9-slim-buster
-  before_script:
-    - apt-get update && apt-get install make
-  script:
-    - make test
+    stage: Test
+    image: python:3.9-slim
+    before_script:
+        - apt-get update -y && apt-get install make -y
+    script: 
+        - make test
 
-
-build_image:
-  stage: build
+Build_and_Push:
+  stage: Build
   image: docker:20.10.16
   services:
     - docker:20.10.16-dind
   variables:
     DOCKER_TLS_CERTDIR: "/certs"
   before_script:
-    - docker login -u $REGISTRY_USER -p $REGISTRY_PASS
+    - docker login -u $username -p $token
   script:
-    - docker build -t $IMAGE_NAME:$IMAGE_TAG .
-    - docker push $IMAGE_NAME:$IMAGE_TAG
+    - docker build -t $image_name:${CI_COMMIT_SHA:0:3} .
+    - docker push $image_name:${CI_COMMIT_SHA:0:3}
 
-
-deploy:
-  stage: deploy
+Deploy:
+  stage: Deploy
   before_script:
-    - chmod 400 $SSH_KEY
+    - echo "Set read permissions to key ..."
+    - chmod 400 "$ssh_key"
+    - id
   script:
-    - ssh -o StrictHostKeyChecking=no -i $SSH_KEY root@161.35.223.117 "
-        docker login -u $REGISTRY_USER -p $REGISTRY_PASS &&
-        docker ps -aq | xargs docker stop | xargs docker rm &&
-        docker run -d -p 5000:5000 $IMAGE_NAME:$IMAGE_TAG"
+  - ssh -o StrictHostKeyChecking=no -i "$ssh_key" ubuntu@44.202.89.233 "
+       sudo apt-get update -y &&
+       sudo apt-get install docker.io -y &&
+       echo "Stopped current container ...." && sudo docker ps -q --filter "publish=5000" | xargs -r sudo docker stop &&
+       echo "Deleting Current Container ...." && sudo docker ps -aq --filter "publish=5000" | xargs -r docker rm &&
+       sudo docker run -d -p 5000:5000 $image_name:${CI_COMMIT_SHA:0:3} "
+  
+  when: manual
+  retry: 1
+  timeout: 1 minute
+  allow_failure: false
+  
+  rules:
+    - if: '$CI_COMMIT_BRANCH=="fea"'
+
+
+
+
+
+
+
