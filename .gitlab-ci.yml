@@ -1,5 +1,5 @@
 run_tests:
-    image: python:3.9-slim-bookworm
+    image: python:3.9-slim
     before_script:
         - apt-get update && apt-get install -y git make
     script:
