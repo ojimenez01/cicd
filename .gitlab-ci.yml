@@ -2,7 +2,12 @@ variables:
   IMAGE_NAME: raduraca96/demo-app
   IMAGE_TAG: python-app-1.0
 
+stages:
+  - test
+  - build
+
 run_tests:
+  stage: test
   image: python:3.9-slim
   before_script:
     - apt-get update && apt-get install -y git make
@@ -10,6 +15,7 @@ run_tests:
     - make test
 
 build_image:
+  stage: build
   image: docker:28.1.1-cli
   services:
     - docker:28.1.1-dind
