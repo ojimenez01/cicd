@@ -3,11 +3,11 @@ variables:
   IMAGE_TAG: python-app-1.0
 
 run_tests:
-    image: python:3.9-slim
-    before_script:
-        - apt-get update && apt-get install -y git make
-    script:
-        - make test
+  image: python:3.9-slim
+  before_script:
+    - apt-get update && apt-get install -y git make
+  script:
+    - make test
 
 build_image:
   image: docker:28.1.1-cli
