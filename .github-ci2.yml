@@ -3,7 +3,14 @@ run_test:
   before_script:
     - apt-get update && apt-get install make
   script:
-    - make test 
+    - make test
+
+buil_image
+  script:
+    - docker build .
+    
+    
+    
     
     
   
